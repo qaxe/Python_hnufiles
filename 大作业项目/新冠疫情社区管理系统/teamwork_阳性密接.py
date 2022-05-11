@@ -9,29 +9,19 @@ Created on Mon May  9 19:27:57 2022
 以收集到的'社区信息表.xlsx'文件为基础，格式如下：
  单元  楼栋   房间 核酸       电话号码
 汪宏  1单元  2栋  202  阴     241562
-进行'核酸阳性名单.xlsx'，'密接名单.xlsx'的统计和更新
-以同楼层为标准进行密接人员筛选
-使用时请保证spyde里存在此三个文件且三文件处于关闭状态
-有疑问或需要修改的请联系杨小天
-----------------
-'''
----------简介------------
-以收集到的'社区信息表.xlsx'文件为基础，格式如下：
- 单元  楼栋   房间 核酸       电话号码
-汪宏  1单元  2栋  202  阴     241562
 进行'核酸阳性名单.xlsx'，'密接名单.xlsx'的统计和更新，和统计条形图的显示
 以同楼层为标准进行密接人员筛选
 使用时请保证spyde里存在此三个文件且三文件处于关闭状态
 有疑问或需要修改的请联系杨小天
 ----------------
-'''
+'''   
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 df=pd.read_excel('社区信息表 .xlsx')
 #-------------控制台分割符号----------#
 def fg():
-    print('#'+'-'*30+'#')
+    print('-'*30)
 #------------------------------------#
 
 #--------控制台显示名单函数-----------#
@@ -71,7 +61,7 @@ def mj_sx(s,yx):
     return df_mj
 #---------------------------------------#
 #-------密接及阳性人数条形图显示---------#
-def bar_show(df,yx,df_mj):  
+def bar_s_show(df,yx,df_mj):  
     matplotlib.rcParams['font.family']='simHei'
     matplotlib.rcParams['axes.unicode_minus'] =False
     dy_list=df['单元'].unique()
@@ -81,14 +71,19 @@ def bar_show(df,yx,df_mj):
         y1.append(len(yx[yx['单元']==i]))
     for i in dy_list:
         y2.append(len(df_mj[df_mj['单元']==i]))
+        
     x = range((len(dy_list)))  
-    plt.bar(x, y1, width=0.2,color='#FF6347',label='阳性')
-    plt.bar([i + 0.2 for i in x], y2, width=0.2, color='#008B8B',label='密接')
-    plt.xticks([i + 0.1 for i in x], dy_list)   
+    p1=plt.bar(x, y1, width=0.2,color='red',label='阳性')
+    p2=plt.bar([i + 0.2 for i in x], y2, width=0.2, color='orange',label='密接')
+    plt.xticks([i + 0.1 for i in x], dy_list)
+    plt.bar_label(p1,label_type='edge')
+    plt.bar_label(p2,label_type='edge')
     plt.ylabel('人数')
     plt.xlabel('单元')
     plt.title('小区阳性及密接统计')
+    plt.legend()
     plt.show() 
+    
     dict4={}
     count=0
     for i in dy_list:
@@ -96,7 +91,42 @@ def bar_show(df,yx,df_mj):
         count+=1
     for key,value in dict4.items():
         print('单元:',key,'隔离总人数:',value)
-#-----------------------------------------#  
+#-----------------------------------------#
+#--------------堆积图显示------------------------# 
+def bar_d_show(df,yx,df_mj):  
+    matplotlib.rcParams['font.family']='simHei'
+    matplotlib.rcParams['axes.unicode_minus'] =False
+    dy_list=df['单元'].unique()
+    y1=[]
+    y2=[]
+    for i in dy_list:
+        y1.append(len(yx[yx['单元']==i]))
+    for i in dy_list:
+        y2.append(len(df_mj[df_mj['单元']==i]))
+        
+    x = range((len(dy_list)))  
+    width=0.35
+    xlabels=dy_list
+    p1=plt.bar(xlabels,y1,width,color='red',label='阳性')
+    p2=plt.bar(xlabels,y2,width,bottom=y1,color='orange',label='密接')
+    #plt.axhline(0,color='grey',linewidth=0)
+    plt.ylabel('隔离人数')
+    plt.xlabel('单元')
+    plt.title('小区阳性及密接统计')
+    plt.legend()
+    plt.bar_label(p1,label_type='center')
+    plt.bar_label(p2,label_type='center')
+    plt.bar_label(p2)
+    plt.show()
+
+    dict4={}
+    count=0
+    for i in dy_list:
+        dict4[i]=y1[count]+y2[count]
+        count+=1
+    for key,value in dict4.items():
+        print('单元:',key,'隔离总人数:',value)
+#-----------------------------------------------------#
 x=0
 fg()
 print('已进入小区阳性及密接筛选系统')
@@ -106,9 +136,11 @@ while True:
         fg() 
         print('在操作台输入对应数字以执行相应操作')
         print('小区信息显示:1')
-        print('阳性筛选:2')
-        print('密接筛选:3')
-        print('密接及阳性人数条形图显示:4')
+        print('个人信息索引:2')
+        print('阳性筛选:3')
+        print('密接筛选:4')
+        print('密接及阳性人数条形图显示:5')
+        print('密接及阳性人数条形堆积图:6')
         print('操作帮助中心:0')
         print('结束系统:9')
         fg()
@@ -117,8 +149,21 @@ while True:
         fg()
         xs(df) 
         fg()
-        x=eval(input('输入操作:'))        
+        x=eval(input('输入操作:'))   
     elif x==2:
+        fg()
+        print('已进入索引:')
+        fg()
+        xx=input('请输入索引人信息(姓名或地址编码或联系方式):')
+        
+        
+        
+        
+        
+        
+        fg()
+        x=eval(input('输入操作:'))        
+    elif x==3:
         fg()
         yx=yx_sx(df)
         print('完成阳性人员筛选')
@@ -129,7 +174,7 @@ while True:
             xs(yx)
         fg()
         x=eval(input('输入操作:'))
-    elif x==3:
+    elif x==4:
         s=df.set_index('姓名')
         yx=yx_sx(df)
         df_mj=mj_sx(s,yx)
@@ -142,14 +187,26 @@ while True:
             xs(df_mj)
         fg()
         x=eval(input('输入操作:'))
-    elif x==4:
+    elif x==5:
         fg()
         s=df.set_index('姓名')
         yx=yx_sx(df)
         df_mj=mj_sx(s,yx)
-        bar_show(df,yx,df_mj)
+        bar_s_show(df,yx,df_mj)
         fg()
         x=eval(input('输入操作:'))
-    elif x==9:
+    elif x==6:
+        fg()
+        s=df.set_index('姓名')
+        yx=yx_sx(df)
+        df_mj=mj_sx(s,yx)
+        bar_d_show(df,yx,df_mj)
+        fg()
+        x=eval(input('输入操作:'))  
+    else:
+        fg()
+        print('正在退出系统')
+        fg()
+        print('已退出系统')
         break
         
