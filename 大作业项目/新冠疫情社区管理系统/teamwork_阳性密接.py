@@ -108,24 +108,24 @@ def bar_d_show(df,yx,df_mj):
     for key,value in dict4.items():
         print('单元:',key,'隔离总人数:',value)
 #-----------------------------------------------------#
-x=0
+x='0'
 fg()
 print('>>>已进入小区阳性及密接筛选系统')
 fg()
 while True:
-    if x==0:
+    if x=='0':
         fg() 
         print('>>>在操作台输入对应数字以执行相应操作','>>>小区信息表显示:1','>>>个人信息索引:2','>>>阳性筛选:3','>>>密接筛选:4'
              '>>>密接及阳性人数条形图显示:5','>>>密接及阳性人数条形堆积图:6','>>>操作帮助中心:0','>>>结束系统:9',sep='\n')
         fg()
-        x=eval(input('>>输入操作:'))
-    elif x==1:
+        x=input('>>请输入下一步操作:')
+    elif x=='1':
          fg()
          a=df.set_index('姓名')
          print(a)
          fg()
-         x=eval(input('>>请输入下一步操作:'))
-    elif x==2:
+         x=input('>>请输入下一步操作:')
+    elif x=='2':
         fg()
         s='y'
         while True:
@@ -159,32 +159,32 @@ while True:
                 print('>>输入0获取主菜单帮助')
                 fg()
                 break
-        x=eval(input('>>请输入下一步操作:'))
+        x=input('>>请输入下一步操作:')
                 
-    elif x==3:
+    elif x=='3':
         fg()
         print('>>已完成阳性筛选')
         yx.to_excel('核酸阳性名单.xlsx')
         print('>>已写入 核酸阳性名单.xlsx')
         fg()
-        x=eval(input('>>请输入下一步操作:'))
-    elif x==4:
+        x=input('>>请输入下一步操作:')
+    elif x=='4':
        fg()
        print('>>已完成密接筛选')
        df_mj.to_excel('密接名单.xlsx')
        print('>>已写入 密接名单.xlsx')
        fg()
-       x=eval(input('>>请输入下一步操作:'))
-    elif x==5:
+       x=input('>>请输入下一步操作:')
+    elif x=='5':
         bar_s_show(df,yx,df_mj)
         print('>>>图表已生成')
         fg()
-        x=eval(input('>>请输入下一步操作:'))
-    elif x==6:
+        x=input('>>请输入下一步操作:')
+    elif x=='6':
         bar_d_show(df,yx,df_mj)
         print('>>>图表已生成')
         fg()
-        x=eval(input('>>请输入下一步操作:'))
+        x=input('>>请输入下一步操作:')
     else:
         fg()
         print('>>>正在退出系统')
@@ -197,3 +197,5 @@ while True:
                 
                     
             
+
+
