@@ -170,7 +170,7 @@ while True:
     elif x==4:
        fg()
        print('>>已完成密接筛选')
-       yx.to_excel('密接名单.xlsx')
+       df_mj.to_excel('密接名单.xlsx')
        print('>>已写入 密接名单.xlsx')
        fg()
        x=eval(input('>>请输入下一步操作:'))
