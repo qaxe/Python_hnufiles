@@ -19,47 +19,29 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 df=pd.read_excel('社区信息表 .xlsx')
+df=df.dropna()
+df=df[['姓名','单元','楼栋','房间','核酸','电话']]
+str_value_list=[]
+for row_index,row in df.iterrows():   
+    str1=str(row['单元'])
+    str2=str(row['楼栋'])
+    str3=str(row['房间'])
+    str_value=str1[0]+str2[0]+str3
+    str_value_list.append(str_value)   
+df['编码']=str_value_list    
+df=df.set_index('编码')
+yx=df[df['核酸']=='阳']
+list1=[i for i in yx.index]
+yx=yx.set_index('姓名')
+list2=[]
+for i in list1:
+    for row_index,row in df.iterrows(): 
+        if row_index[0:2]==i[0:2]:
+            list2.append(row)
+            df_mj=pd.DataFrame(list2)
 #-------------控制台分割符号----------#
 def fg():
     print('-'*30)
-#------------------------------------#
-
-#--------控制台显示名单函数-----------#
-def  xs(x):
-    print(x)
-#------------------------------------#
-#-------将人员地址信息转换为特殊编码，以{姓名：编码}输出---#
-def dz_code(s):
-    dict1={}
-    for row_index,row in s.iterrows():   
-        str1=str(row['单元'])
-        str2=str(row['楼栋'])
-        str3=str(row['房间'])
-        str_value=str1[0:1]+str2[0:1]+str3
-        dict1[row_index]=str_value
-    return dict1
-#---------------------------------
-def yx_sx(df):
-    yx=df[df['核酸']=='阳']
-    yx.set_index('姓名',inplace=True)
-    yx.to_excel('核酸阳性名单.xlsx')
-    return yx
-#--密接筛选函数，信息储存进df_mj(dataframe)中----#
-def mj_sx(s,yx):  
-    dict1=dz_code(s)#小区人员信息字典
-    dict2=dz_code(yx)#阳性人员信息字典
-    dict3={}#密接人员信息字典
-    l=[]
-    for key,value in dict2.items():
-        for i,j in dict1.items():
-            if j[-3]==value[-3]:
-                  dict3[i]=j
-    for key in dict3.keys():
-        l.append(s.loc[key])
-    df_mj=pd.DataFrame(l)
-    df_mj.to_excel('密接名单.xlsx')
-    return df_mj
-#---------------------------------------#
 #-------密接及阳性人数条形图显示---------#
 def bar_s_show(df,yx,df_mj):  
     matplotlib.rcParams['font.family']='simHei'
@@ -104,7 +86,6 @@ def bar_d_show(df,yx,df_mj):
     for i in dy_list:
         y2.append(len(df_mj[df_mj['单元']==i]))
         
-    x = range((len(dy_list)))  
     width=0.35
     xlabels=dy_list
     p1=plt.bar(xlabels,y1,width,color='red',label='阳性')
@@ -129,84 +110,96 @@ def bar_d_show(df,yx,df_mj):
 #-----------------------------------------------------#
 x=0
 fg()
-print('已进入小区阳性及密接筛选系统')
+print('>>>已进入小区阳性及密接筛选系统')
 fg()
 while True:
     if x==0:
         fg() 
-        print('在操作台输入对应数字以执行相应操作')
-        print('小区信息显示:1')
-        print('个人信息索引:2')
-        print('阳性筛选:3')
-        print('密接筛选:4')
-        print('密接及阳性人数条形图显示:5')
-        print('密接及阳性人数条形堆积图:6')
-        print('操作帮助中心:0')
-        print('结束系统:9')
+        print('>>>在操作台输入对应数字以执行相应操作')
+        print('>>>小区信息表显示:1')
+        print('>>>个人信息索引:2')
+        print('>>>阳性筛选:3')
+        print('>>>密接筛选:4')
+        print('>>>密接及阳性人数条形图显示:5')
+        print('>>>密接及阳性人数条形堆积图:6')
+        print('>>>操作帮助中心:0')
+        print('>>>结束系统:9')
         fg()
-        x=eval(input('输入操作:'))
+        x=eval(input('>>输入操作:'))
     elif x==1:
-        fg()
-        xs(df) 
-        fg()
-        x=eval(input('输入操作:'))   
+         fg()
+         print(df)
+         fg()
+         x=eval(input('>>请输入下一步操作:'))
     elif x==2:
         fg()
-        print('已进入索引:')
-        fg()
-        xx=input('请输入索引人信息(姓名或地址编码或联系方式):')
-        
-        
-        
-        
-        
-        
-        fg()
-        x=eval(input('输入操作:'))        
+        s='y'
+        while True:
+            if s in ['Y','y']:
+                xx=input('>>请输入姓名或电话：')
+                if xx in df['姓名'].tolist() or xx in df['电话'].tolist():
+                  if ord(xx[0]) in [i for i in range(48,58)]:
+                    print('>>查询结果如下:')
+                    print(df[df['电话']==xx])
+                    fg()
+                    s=input('>>按(Y/y)继续查询，其他键结束查询：')
+                    fg()
+                  else:
+                    print('>>查询结果如下:')
+                    print(df[df['姓名']==xx])
+                    fg()
+                    s=input('>>按(Y/y)继续查询，其他键结束查询：')
+                    fg()
+                    
+                else:
+                    fg()
+                    print('>>无此人信息或输入错误')
+                    fg()
+                    s=input('>>按(Y/y)继续查询，其他键结束查询：')
+                    fg()
+            else:
+                print('>>查询系统结束')
+                fg()
+                print('>>已返回主系统')
+                fg()
+                break
+            x=eval(input('>>请输入下一步操作:'))
+                
     elif x==3:
         fg()
-        yx=yx_sx(df)
-        print('完成阳性人员筛选')
-        print('已写进excel文件:核酸阳性名单.xlsx')
+        print('>>已完成阳性筛选')
+        yx.to_excel('核酸阳性名单.xlsx')
+        print('>>已写入 核酸阳性名单.xlsx')
         fg()
-        s=input( '是否在控制台显示(Y/y N/n):')
-        if s=='Y' or s=='y':
-            xs(yx)
-        fg()
-        x=eval(input('输入操作:'))
+        x=eval(input('>>请输入下一步操作:'))
     elif x==4:
-        s=df.set_index('姓名')
-        yx=yx_sx(df)
-        df_mj=mj_sx(s,yx)
-        fg()
-        print('完成密接人员筛选')
-        print('已写进excel:密接人员名单.xlsx')
-        fg()
-        s=input( '是否在控制台显示(Y/y N/n):')
-        if s=='Y' or s=='y':
-            xs(df_mj)
-        fg()
-        x=eval(input('输入操作:'))
+       fg()
+       print('>>已完成密接筛选')
+       yx.to_excel('密接名单.xlsx')
+       print('>>已写入 密接名单.xlsx')
+       fg()
+       x=eval(input('>>请输入下一步操作:'))
     elif x==5:
-        fg()
-        s=df.set_index('姓名')
-        yx=yx_sx(df)
-        df_mj=mj_sx(s,yx)
         bar_s_show(df,yx,df_mj)
+        print('>>>图表已生成')
         fg()
-        x=eval(input('输入操作:'))
+        x=eval(input('>>请输入下一步操作:'))
     elif x==6:
-        fg()
-        s=df.set_index('姓名')
-        yx=yx_sx(df)
-        df_mj=mj_sx(s,yx)
         bar_d_show(df,yx,df_mj)
+        print('>>>图表已生成')
         fg()
-        x=eval(input('输入操作:'))  
+        x=eval(input('>>请输入下一步操作:'))
     else:
+        print('>>>正在退出系统')
         fg()
-        print('正在退出系统')
-        fg()
-        print('已退出系统')
+        print('>>>已退出系统')
         break
         
+        
+        
+                
+                
+                    
+            
+
+
