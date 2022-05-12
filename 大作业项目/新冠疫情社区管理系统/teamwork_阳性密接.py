@@ -121,7 +121,8 @@ while True:
         x=eval(input('>>输入操作:'))
     elif x==1:
          fg()
-         print(df)
+         a=df.set_index('姓名')
+         print(a)
          fg()
          x=eval(input('>>请输入下一步操作:'))
     elif x==2:
@@ -185,6 +186,7 @@ while True:
         fg()
         x=eval(input('>>请输入下一步操作:'))
     else:
+        fg()
         print('>>>正在退出系统')
         fg()
         print('>>>已退出系统')
@@ -195,11 +197,3 @@ while True:
                 
                     
             
-
-
-
-                
-                    
-            
-
-
