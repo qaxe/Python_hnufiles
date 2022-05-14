@@ -74,40 +74,6 @@ def bar_s_show(df,yx,df_mj):
     for key,value in dict4.items():
         print('单元:',key,'隔离总人数:',value)
 #-----------------------------------------#
-#--------------堆积图显示------------------------# 
-def bar_d_show(df,yx,df_mj):  
-    matplotlib.rcParams['font.family']='simHei'
-    matplotlib.rcParams['axes.unicode_minus'] =False
-    dy_list=df['单元'].unique()
-    y1=[]
-    y2=[]
-    for i in dy_list:
-        y1.append(len(yx[yx['单元']==i]))
-    for i in dy_list:
-        y2.append(len(df_mj[df_mj['单元']==i]))
-        
-    width=0.35
-    xlabels=dy_list
-    p1=plt.bar(xlabels,y1,width,color='red',label='阳性')
-    p2=plt.bar(xlabels,y2,width,bottom=y1,color='orange',label='密接')
-    #plt.axhline(0,color='grey',linewidth=0)
-    plt.ylabel('隔离人数')
-    plt.xlabel('单元')
-    plt.title('小区阳性及密接统计')
-    plt.legend()
-    plt.bar_label(p1,label_type='center')
-    plt.bar_label(p2,label_type='center')
-    plt.bar_label(p2)
-    plt.show()
-
-    dict4={}
-    count=0
-    for i in dy_list:
-        dict4[i]=y1[count]+y2[count]
-        count+=1
-    for key,value in dict4.items():
-        print('单元:',key,'隔离总人数:',value)
-#-----------------------------------------------------#
 x='0'
 fg()
 print('>>>已进入小区阳性及密接筛选系统')
@@ -115,8 +81,8 @@ fg()
 while True:
     if x=='0':
         fg() 
-        print('>>>在操作台输入对应数字以执行相应操作','>>>小区信息表显示:1','>>>个人信息索引:2','>>>阳性筛选:3','>>>密接筛选:4'
-             '>>>密接及阳性人数条形图显示:5','>>>密接及阳性人数条形堆积图:6','>>>操作帮助中心:0','>>>结束系统:9',sep='\n')
+        print('>>>操作帮助中心:0','>>>在操作台输入对应数字以执行相应操作','>>>小区信息表显示:1','>>>个人信息索引:2','>>>阳性筛选:3','>>>密接筛选:4'
+             ,'>>>密接及阳性人数条形图显示:5','>>>结束系统:9',sep='\n')
         fg()
         x=input('>>请输入下一步操作:')
     elif x=='1':
@@ -166,22 +132,20 @@ while True:
         print('>>已完成阳性筛选')
         yx.to_excel('核酸阳性名单.xlsx')
         print('>>已写入 核酸阳性名单.xlsx')
+        print(yx)
         fg()
         x=input('>>请输入下一步操作:')
     elif x=='4':
        fg()
        print('>>已完成密接筛选')
-       df_mj.to_excel('密接名单.xlsx')
        print('>>已写入 密接名单.xlsx')
+       df_mj.set_index('姓名',inplace=True)
+       df_mj.to_excel('密接名单.xlsx')
+       print(df_mj)
        fg()
        x=input('>>请输入下一步操作:')
     elif x=='5':
         bar_s_show(df,yx,df_mj)
-        print('>>>图表已生成')
-        fg()
-        x=input('>>请输入下一步操作:')
-    elif x=='6':
-        bar_d_show(df,yx,df_mj)
         print('>>>图表已生成')
         fg()
         x=input('>>请输入下一步操作:')
@@ -194,6 +158,12 @@ while True:
         
         
                 
+                
+                    
+            
+
+
+
                 
                     
             
